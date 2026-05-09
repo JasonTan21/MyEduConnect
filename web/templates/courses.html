@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <h1>Course catalogue</h1>
+  <form class="search" method="get">
+    <input name="q" value="{{ term }}" placeholder="Search course code or title">
+    <button class="button" type="submit">Search</button>
+  </form>
+  <div class="grid">
+    {% for course in courses %}
+      <article class="card">
+        <span>{{ course.code }}</span>
+        <h3>{{ course.title }}</h3>
+        <p>{{ course.description }}</p>
+        <strong>RM {{ course.fee }}</strong>
+        {% if user %}
+          <form method="post" action="{{ url_for('enrol', course_id=course.id) }}">
+            <button class="button small" type="submit">Enrol</button>
+          </form>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

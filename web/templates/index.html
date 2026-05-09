@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Connected learning for Malaysian schools</h1>
+    <p>Course discovery, enrolment, assessments, payment workflow, and administrator oversight in one intentionally vulnerable training platform.</p>
+    <div class="actions">
+      <a class="button" href="{{ url_for('courses') }}">Browse courses</a>
+      <a class="button secondary" href="{{ url_for('login') }}">Staff login</a>
+    </div>
+  </div>
+  <div class="hero-panel">
+    <strong>Demo accounts</strong>
+    <p>Admin: admin@myeduconnect.local / admin123</p>
+    <p>Student: aina@student.local / student123</p>
+    <p>SSH: student / student123 on port 2222</p>
+  </div>
+</section>
+<section>
+  <h2>Featured courses</h2>
+  <div class="grid">
+    {% for course in courses %}
+      <article class="card">
+        <span>{{ course.code }}</span>
+        <h3>{{ course.title }}</h3>
+        <p>{{ course.description }}</p>
+        <strong>RM {{ course.fee }}</strong>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

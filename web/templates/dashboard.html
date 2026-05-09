@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <h1>Welcome, {{ user.name }}</h1>
+  <div class="columns">
+    <div>
+      <h2>Your enrolments</h2>
+      <table>
+        <tr><th>Course</th><th>Status</th><th>Action</th></tr>
+        {% for item in enrolments %}
+          <tr>
+            <td>{{ item.code }} - {{ item.title }}</td>
+            <td>{{ item.status }}</td>
+            <td class="table-actions">
+              {% if item.status == 'pending_payment' %}
+                <a class="button small" href="{{ url_for('payment', course_id=item.course_id) }}">Continue payment</a>
+              {% endif %}
+              {% if item.status != 'cancelled' %}
+                <form class="inline-form" method="post" action="{{ url_for('cancel_enrolment', enrolment_id=item.id) }}">
+                  <button class="button small danger" type="submit">Cancel</button>
+                </form>
+              {% else %}
+                <form class="inline-form" method="post" action="{{ url_for('enrol', course_id=item.course_id) }}">
+                  <button class="button small" type="submit">Enrol again</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div>
+      <h2>Announcements</h2>
+      {% for item in announcements %}
+        <article class="notice">
+          <h3>{{ item.title | safe }}</h3>
+          <p>{{ item.body | safe }}</p>
+          <small>Posted by {{ item.author }}</small>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

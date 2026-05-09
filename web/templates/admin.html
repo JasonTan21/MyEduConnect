@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <h1>Administrator panel</h1>
+  <div class="columns">
+    <form method="post">
+      <h2>Post announcement</h2>
+      <label>Title <input name="title"></label>
+      <label>Body <textarea name="body"></textarea></label>
+      <button class="button" type="submit">Publish</button>
+    </form>
+    <div>
+      <h2>Payments</h2>
+      <table>
+        <tr><th>ID</th><th>User</th><th>Course</th><th>Amount</th><th>Invoice</th></tr>
+        {% for payment in payments %}
+          <tr>
+            <td>{{ payment.id }}</td>
+            <td>{{ payment.user_id }}</td>
+            <td>{{ payment.course_id }}</td>
+            <td>RM {{ payment.amount }}</td>
+            <td><a href="{{ url_for('invoice', payment_id=payment.id) }}">View</a></td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  <h2>Users</h2>
+  <table>
+    <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Guardian</th><th>Bio</th></tr>
+    {% for row in users %}
+      <tr>
+        <td>{{ row.id }}</td>
+        <td>{{ row.name }}</td>
+        <td>{{ row.email }}</td>
+        <td>{{ row.role }}</td>
+        <td>{{ row.guardian_phone }}</td>
+        <td>{{ row.bio | safe }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</section>
+{% endblock %}

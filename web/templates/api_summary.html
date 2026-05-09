@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="narrow">
+  <h1>Internal API summary</h1>
+  <p>This page consumes the separate REST API component over cleartext HTTP.</p>
+  <p><strong>API base:</strong> {{ api_base }}</p>
+  <pre>{{ stats }}</pre>
+</section>
+{% endblock %}

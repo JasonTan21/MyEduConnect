@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MyEduConnect</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}">MyEduConnect</a>
+    <nav>
+      <a href="{{ url_for('courses') }}">Courses</a>
+      {% if user %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('support') }}">Support</a>
+        <a href="{{ url_for('api_summary') }}">API</a>
+        {% if user.role == 'admin' %}
+          <a href="{{ url_for('admin') }}">Admin</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a class="button small" href="{{ url_for('register') }}">Register</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

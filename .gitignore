@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.DS_Store
+.env
+db_data/
+web/uploads/*
+!web/uploads/.gitkeep
+evidence/scans/*
+evidence/pcaps/*
+evidence/screenshots/*
+!evidence/scans/.gitkeep
+!evidence/pcaps/.gitkeep
+!evidence/screenshots/.gitkeep

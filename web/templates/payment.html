@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="narrow">
+  <h1>Mock payment</h1>
+  <p>{{ course.code }} - {{ course.title }}</p>
+  <p><strong>Amount:</strong> RM {{ course.fee }}</p>
+  <form method="post">
+    <label>Card number <input name="card_number" value="4111111111111111"></label>
+    <label>Expiry <input name="expiry" value="12/28"></label>
+    <label>CVV <input name="cvv" value="123"></label>
+    <button class="button" type="submit">Pay now</button>
+  </form>
+</section>
+{% endblock %}

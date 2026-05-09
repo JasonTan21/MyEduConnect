@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="narrow">
+  <h1>Profile</h1>
+  <form method="post">
+    <label>Name <input name="name" value="{{ user.name }}" required></label>
+    <label>Guardian phone <input name="guardian_phone" value="{{ user.guardian_phone }}"></label>
+    <label>Bio <textarea name="bio">{{ user.bio }}</textarea></label>
+    <button class="button" type="submit">Save profile</button>
+  </form>
+  <div class="preview">
+    <h2>Public bio preview</h2>
+    <p>{{ user.bio | safe }}</p>
+  </div>
+</section>
+{% endblock %}

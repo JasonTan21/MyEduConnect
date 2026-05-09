@@ -1,0 +1,69 @@
+services:
+  web:
+    build: ./web
+    container_name: myeduconnect-web
+    ports:
+      - "8080:8080"
+      - "2222:22"
+    environment:
+      APP_ENV: vulnerable
+      DB_HOST: db
+      DB_USER: myedu
+      DB_PASSWORD: myedu123
+      DB_NAME: myeduconnect
+      API_BASE: http://api:5001
+      API_SHARED_KEY: demo-api-key
+    volumes:
+      - ./web:/app
+      - ./evidence:/evidence
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+  api:
+    build: ./api
+    container_name: myeduconnect-api
+    ports:
+      - "5001:5001"
+    environment:
+      DB_HOST: db
+      DB_USER: myedu
+      DB_PASSWORD: myedu123
+      DB_NAME: myeduconnect
+      API_SHARED_KEY: demo-api-key
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: myeduconnect-db
+    command: --default-authentication-plugin=mysql_native_password --local-infile=1
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: myeduconnect
+      MYSQL_USER: myedu
+      MYSQL_PASSWORD: myedu123
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  adminer:
+    image: adminer:latest
+    container_name: myeduconnect-adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:

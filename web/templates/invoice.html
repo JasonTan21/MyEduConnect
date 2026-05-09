@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="narrow invoice">
+  <h1>Invoice #{{ invoice.id }}</h1>
+  <p><strong>Name:</strong> {{ invoice.name }}</p>
+  <p><strong>Email:</strong> {{ invoice.email }}</p>
+  <p><strong>Course:</strong> {{ invoice.code }} - {{ invoice.title }}</p>
+  <p><strong>Amount:</strong> RM {{ invoice.amount }}</p>
+  <p><strong>Card:</strong> **** **** **** {{ invoice.card_last4 }}</p>
+  <p><strong>Status:</strong> {{ invoice.status }}</p>
+</section>
+{% endblock %}

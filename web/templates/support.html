@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <h1>Support centre</h1>
+  <form class="narrow" method="post" enctype="multipart/form-data">
+    <label>Upload attachment <input name="attachment" type="file"></label>
+    <button class="button" type="submit">Upload</button>
+  </form>
+  <h2>Your uploads</h2>
+  <table>
+    <tr><th>ID</th><th>File</th><th>Link</th></tr>
+    {% for file in files %}
+      <tr>
+        <td>{{ file.id }}</td>
+        <td>{{ file.original_name }}</td>
+        <td><a href="/uploads/{{ file.filename }}">Open</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+</section>
+{% endblock %}
