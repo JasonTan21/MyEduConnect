@@ -1,0 +1,106 @@
+# Nmap 7.99 scan initiated Mon May 11 15:37:33 2026 as: /usr/lib/nmap/nmap --privileged -sV -sC -p 2222,3306,5001,8080,8081 -oN phase2-tcp-service-scan.txt 192.168.0.92
+Nmap scan report for 192.168.0.92
+Host is up (0.00071s latency).
+
+PORT     STATE SERVICE VERSION
+2222/tcp open  ssh     OpenSSH 10.0p2 Debian 7+deb13u2 (protocol 2.0)
+3306/tcp open  mysql   MySQL 8.0.46
+| ssl-cert: Subject: commonName=MySQL_Server_8.0.46_Auto_Generated_Server_Certificate
+| Not valid before: 2026-05-09T08:43:53
+|_Not valid after:  2036-05-06T08:43:53
+|_ssl-date: TLS randomness does not represent time
+| mysql-info: 
+|   Protocol: 10
+|   Version: 8.0.46
+|   Thread ID: 154
+|   Capabilities flags: 65535
+|   Some Capabilities: Speaks41ProtocolOld, DontAllowDatabaseTableColumn, LongColumnFlag, Support41Auth, InteractiveClient, ConnectWithDatabase, IgnoreSigpipes, SupportsTransactions, Speaks41ProtocolNew, FoundRows, SwitchToSSLAfterHandshake, IgnoreSpaceBeforeParenthesis, SupportsLoadDataLocal, ODBCClient, SupportsCompression, LongPassword, SupportsAuthPlugins, SupportsMultipleStatments, SupportsMultipleResults
+|   Status: Autocommit
+|   Salt: Jm:X\x01\x0BFF\x1BL@LtWW{pke\x02
+|_  Auth Plugin Name: mysql_native_password
+5001/tcp open  http    Werkzeug httpd 3.1.8 (Python 3.12.13)
+|_http-server-header: Werkzeug/3.1.8 Python/3.12.13
+|_http-title: 404 Not Found
+8080/tcp open  http    Werkzeug httpd 3.1.8 (Python 3.12.13)
+|_http-server-header: Werkzeug/3.1.8 Python/3.12.13
+|_http-title: MyEduConnect
+8081/tcp open  http    (PHP 8.4.21)
+|_http-title: Login - Adminer
+| fingerprint-strings: 
+|   FourOhFourRequest: 
+|     HTTP/1.0 200 OK
+|     Date: Mon, 11 May 2026 07:37:40 GMT
+|     Connection: close
+|     X-Powered-By: PHP/8.4.21
+|     Set-Cookie: adminer_sid=43326c612dfdda2f7f4fd5352750e23f; path=/nice%20ports%2C/Tri%6Eity.txt%2ebak; HttpOnly
+|     Set-Cookie: adminer_key=425a861fe75e686dbd843e4de1aeec7c; path=/nice%20ports%2C/Tri%6Eity.txt%2ebak; HttpOnly; SameSite=lax
+|     Content-Type: text/html; charset=utf-8
+|     Cache-Control: no-cache
+|     X-Frame-Options: deny
+|     X-XSS-Protection: 0
+|     X-Content-Type-Options: nosniff
+|     Referrer-Policy: origin-when-cross-origin
+|     Content-Security-Policy: script-src 'self' 'unsafe-inline' 'nonce-ZmE3MmUxNjUzOTk3ZjUxYmM3YWI4ZDkzYjNiOTZkMDM=' 'strict-dynamic'; connect-src 'self' https://www.adminer.org; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+|     Vary: Accept-Encoding
+|     <!DOCTYPE html>
+|     <html lang="en" dir="ltr">
+|     <meta http-equiv="Content-Type" content="text/html; charset=utf-
+|   GetRequest: 
+|     HTTP/1.0 200 OK
+|     Date: Mon, 11 May 2026 07:37:40 GMT
+|     Connection: close
+|     X-Powered-By: PHP/8.4.21
+|     Set-Cookie: adminer_sid=a30e5e0f4c1ec7c196cb77aa4d55b0d1; path=/; HttpOnly
+|     Set-Cookie: adminer_key=5c0f137b53805a2ba453c197696251bb; path=/; HttpOnly; SameSite=lax
+|     Content-Type: text/html; charset=utf-8
+|     Cache-Control: no-cache
+|     X-Frame-Options: deny
+|     X-XSS-Protection: 0
+|     X-Content-Type-Options: nosniff
+|     Referrer-Policy: origin-when-cross-origin
+|     Content-Security-Policy: script-src 'self' 'unsafe-inline' 'nonce-ZmJhMjJmYmRiMTE5OTY2NzRkMWNmZTZlMTMzNGRiN2Y=' 'strict-dynamic'; connect-src 'self' https://www.adminer.org; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+|     Vary: Accept-Encoding
+|     <!DOCTYPE html>
+|     <html lang="en" dir="ltr">
+|     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+|     <meta name="robots" content="noindex">
+|_    <meta name="viewport" conte
+|_http-trane-info: Problem with XML parsing of /evox/about
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port8081-TCP:V=7.99%I=7%D=5/11%Time=6A018744%P=aarch64-unknown-linux-gn
+SF:u%r(GetRequest,13CB,"HTTP/1\.0\x20200\x20OK\r\nDate:\x20Mon,\x2011\x20M
+SF:ay\x202026\x2007:37:40\x20GMT\r\nConnection:\x20close\r\nX-Powered-By:\
+SF:x20PHP/8\.4\.21\r\nSet-Cookie:\x20adminer_sid=a30e5e0f4c1ec7c196cb77aa4
+SF:d55b0d1;\x20path=/;\x20HttpOnly\r\nSet-Cookie:\x20adminer_key=5c0f137b5
+SF:3805a2ba453c197696251bb;\x20path=/;\x20HttpOnly;\x20SameSite=lax\r\nCon
+SF:tent-Type:\x20text/html;\x20charset=utf-8\r\nCache-Control:\x20no-cache
+SF:\r\nX-Frame-Options:\x20deny\r\nX-XSS-Protection:\x200\r\nX-Content-Typ
+SF:e-Options:\x20nosniff\r\nReferrer-Policy:\x20origin-when-cross-origin\r
+SF:\nContent-Security-Policy:\x20script-src\x20'self'\x20'unsafe-inline'\x
+SF:20'nonce-ZmJhMjJmYmRiMTE5OTY2NzRkMWNmZTZlMTMzNGRiN2Y='\x20'strict-dynam
+SF:ic';\x20connect-src\x20'self'\x20https://www\.adminer\.org;\x20frame-sr
+SF:c\x20'none';\x20object-src\x20'none';\x20base-uri\x20'none';\x20form-ac
+SF:tion\x20'self'\r\nVary:\x20Accept-Encoding\r\n\r\n<!DOCTYPE\x20html>\n<
+SF:html\x20lang=\"en\"\x20dir=\"ltr\">\n<meta\x20http-equiv=\"Content-Type
+SF:\"\x20content=\"text/html;\x20charset=utf-8\">\n<meta\x20name=\"robots\
+SF:"\x20content=\"noindex\">\n<meta\x20name=\"viewport\"\x20conte")%r(Four
+SF:OhFourRequest,17B4,"HTTP/1\.0\x20200\x20OK\r\nDate:\x20Mon,\x2011\x20Ma
+SF:y\x202026\x2007:37:40\x20GMT\r\nConnection:\x20close\r\nX-Powered-By:\x
+SF:20PHP/8\.4\.21\r\nSet-Cookie:\x20adminer_sid=43326c612dfdda2f7f4fd53527
+SF:50e23f;\x20path=/nice%20ports%2C/Tri%6Eity\.txt%2ebak;\x20HttpOnly\r\nS
+SF:et-Cookie:\x20adminer_key=425a861fe75e686dbd843e4de1aeec7c;\x20path=/ni
+SF:ce%20ports%2C/Tri%6Eity\.txt%2ebak;\x20HttpOnly;\x20SameSite=lax\r\nCon
+SF:tent-Type:\x20text/html;\x20charset=utf-8\r\nCache-Control:\x20no-cache
+SF:\r\nX-Frame-Options:\x20deny\r\nX-XSS-Protection:\x200\r\nX-Content-Typ
+SF:e-Options:\x20nosniff\r\nReferrer-Policy:\x20origin-when-cross-origin\r
+SF:\nContent-Security-Policy:\x20script-src\x20'self'\x20'unsafe-inline'\x
+SF:20'nonce-ZmE3MmUxNjUzOTk3ZjUxYmM3YWI4ZDkzYjNiOTZkMDM='\x20'strict-dynam
+SF:ic';\x20connect-src\x20'self'\x20https://www\.adminer\.org;\x20frame-sr
+SF:c\x20'none';\x20object-src\x20'none';\x20base-uri\x20'none';\x20form-ac
+SF:tion\x20'self'\r\nVary:\x20Accept-Encoding\r\n\r\n<!DOCTYPE\x20html>\n<
+SF:html\x20lang=\"en\"\x20dir=\"ltr\">\n<meta\x20http-equiv=\"Content-Type
+SF:\"\x20content=\"text/html;\x20charset=utf-");
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon May 11 15:37:54 2026 -- 1 IP address (1 host up) scanned in 21.01 seconds

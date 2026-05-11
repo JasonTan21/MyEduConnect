@@ -1,0 +1,17 @@
+
+; <<>> DiG 9.20.22-1-Debian <<>> myeduconnect.local ANY
+;; global options: +cmd
+;; Got answer:
+;; WARNING: .local is reserved for Multicast DNS
+;; You are currently testing what happens when an mDNS query is leaked to DNS
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 60125
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;myeduconnect.local.		IN	ANY
+
+;; Query time: 79 msec
+;; SERVER: 192.168.64.1#53(192.168.64.1) (TCP)
+;; WHEN: Mon May 11 16:18:30 +08 2026
+;; MSG SIZE  rcvd: 36
+

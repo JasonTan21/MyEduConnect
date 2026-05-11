@@ -1,0 +1,129 @@
+# Nmap 7.99 scan initiated Mon May 11 15:55:18 2026 as: /usr/lib/nmap/nmap --privileged -sV --script http-title,http-headers,http-methods -p 5001,8080,8081 -oN phase2-http-enum.txt 192.168.0.92
+Nmap scan report for 192.168.0.92
+Host is up (0.0021s latency).
+
+PORT     STATE SERVICE VERSION
+5001/tcp open  http    Werkzeug httpd 3.1.8 (Python 3.12.13)
+|_http-server-header: Werkzeug/3.1.8 Python/3.12.13
+|_http-title: 404 Not Found
+| http-headers: 
+|   Server: Werkzeug/3.1.8 Python/3.12.13
+|   Date: Mon, 11 May 2026 07:55:37 GMT
+|   Content-Type: text/html; charset=utf-8
+|   Content-Length: 207
+|   Connection: close
+|   
+|_  (Request type: GET)
+8080/tcp open  http    Werkzeug httpd 3.1.8 (Python 3.12.13)
+| http-methods: 
+|_  Supported Methods: GET OPTIONS HEAD
+| http-headers: 
+|   Server: Werkzeug/3.1.8 Python/3.12.13
+|   Date: Mon, 11 May 2026 07:55:37 GMT
+|   Content-Type: text/html; charset=utf-8
+|   Content-Length: 1912
+|   Server: MyEduConnect-Legacy/1.0
+|   X-Powered-By: Flask-Debug-Lab
+|   Connection: close
+|   
+|_  (Request type: HEAD)
+|_http-server-header: Werkzeug/3.1.8 Python/3.12.13
+|_http-title: MyEduConnect
+8081/tcp open  http    (PHP 8.4.21)
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+| http-headers: 
+|   Host: 192.168.0.92:8081
+|   Date: Mon, 11 May 2026 07:55:37 GMT
+|   Connection: close
+|   X-Powered-By: PHP/8.4.21
+|   Set-Cookie: adminer_sid=14d1d1194513dfccb414100262f70596; path=/; HttpOnly
+|   Set-Cookie: adminer_key=45938c1548763d32c340c527994e1fd5; path=/; HttpOnly; SameSite=lax
+|   Content-Type: text/html; charset=utf-8
+|   Cache-Control: no-cache
+|   X-Frame-Options: deny
+|   X-XSS-Protection: 0
+|   X-Content-Type-Options: nosniff
+|   Referrer-Policy: origin-when-cross-origin
+|   Content-Security-Policy: script-src 'self' 'unsafe-inline' 'nonce-MzZmZGExOWQ1ODEwYWE0Nzg4ZWVhYzhmN2M1NTRhMjE=' 'strict-dynamic'; connect-src 'self' https://www.adminer.org; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+|   Vary: Accept-Encoding
+|   
+|_  (Request type: HEAD)
+|_http-title: Login - Adminer
+| fingerprint-strings: 
+|   FourOhFourRequest: 
+|     HTTP/1.0 200 OK
+|     Date: Mon, 11 May 2026 07:55:25 GMT
+|     Connection: close
+|     X-Powered-By: PHP/8.4.21
+|     Set-Cookie: adminer_sid=afb74273713876fea295119d97293c77; path=/nice%20ports%2C/Tri%6Eity.txt%2ebak; HttpOnly
+|     Set-Cookie: adminer_key=3b7d89adc6a2b23b84f00924433693e2; path=/nice%20ports%2C/Tri%6Eity.txt%2ebak; HttpOnly; SameSite=lax
+|     Content-Type: text/html; charset=utf-8
+|     Cache-Control: no-cache
+|     X-Frame-Options: deny
+|     X-XSS-Protection: 0
+|     X-Content-Type-Options: nosniff
+|     Referrer-Policy: origin-when-cross-origin
+|     Content-Security-Policy: script-src 'self' 'unsafe-inline' 'nonce-YTg5ZGJiZTRlNzg5ZTk3ODgwMzZkMWViMDllYjQ4MGE=' 'strict-dynamic'; connect-src 'self' https://www.adminer.org; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+|     Vary: Accept-Encoding
+|     <!DOCTYPE html>
+|     <html lang="en" dir="ltr">
+|     <meta http-equiv="Content-Type" content="text/html; charset=utf-
+|   GetRequest: 
+|     HTTP/1.0 200 OK
+|     Date: Mon, 11 May 2026 07:55:25 GMT
+|     Connection: close
+|     X-Powered-By: PHP/8.4.21
+|     Set-Cookie: adminer_sid=6bc16d28781b18b9079ecb15973be991; path=/; HttpOnly
+|     Set-Cookie: adminer_key=703f14ce22fa0fded690b16ac9bbb775; path=/; HttpOnly; SameSite=lax
+|     Content-Type: text/html; charset=utf-8
+|     Cache-Control: no-cache
+|     X-Frame-Options: deny
+|     X-XSS-Protection: 0
+|     X-Content-Type-Options: nosniff
+|     Referrer-Policy: origin-when-cross-origin
+|     Content-Security-Policy: script-src 'self' 'unsafe-inline' 'nonce-YmUwZmIzOGZiMWI5NDc2N2YzMzgxMGZiNTEwM2Q0MDc=' 'strict-dynamic'; connect-src 'self' https://www.adminer.org; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+|     Vary: Accept-Encoding
+|     <!DOCTYPE html>
+|     <html lang="en" dir="ltr">
+|     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+|     <meta name="robots" content="noindex">
+|_    <meta name="viewport" conte
+|_http-trane-info: Problem with XML parsing of /evox/about
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port8081-TCP:V=7.99%I=7%D=5/11%Time=6A018B6D%P=aarch64-unknown-linux-gn
+SF:u%r(GetRequest,170F,"HTTP/1\.0\x20200\x20OK\r\nDate:\x20Mon,\x2011\x20M
+SF:ay\x202026\x2007:55:25\x20GMT\r\nConnection:\x20close\r\nX-Powered-By:\
+SF:x20PHP/8\.4\.21\r\nSet-Cookie:\x20adminer_sid=6bc16d28781b18b9079ecb159
+SF:73be991;\x20path=/;\x20HttpOnly\r\nSet-Cookie:\x20adminer_key=703f14ce2
+SF:2fa0fded690b16ac9bbb775;\x20path=/;\x20HttpOnly;\x20SameSite=lax\r\nCon
+SF:tent-Type:\x20text/html;\x20charset=utf-8\r\nCache-Control:\x20no-cache
+SF:\r\nX-Frame-Options:\x20deny\r\nX-XSS-Protection:\x200\r\nX-Content-Typ
+SF:e-Options:\x20nosniff\r\nReferrer-Policy:\x20origin-when-cross-origin\r
+SF:\nContent-Security-Policy:\x20script-src\x20'self'\x20'unsafe-inline'\x
+SF:20'nonce-YmUwZmIzOGZiMWI5NDc2N2YzMzgxMGZiNTEwM2Q0MDc='\x20'strict-dynam
+SF:ic';\x20connect-src\x20'self'\x20https://www\.adminer\.org;\x20frame-sr
+SF:c\x20'none';\x20object-src\x20'none';\x20base-uri\x20'none';\x20form-ac
+SF:tion\x20'self'\r\nVary:\x20Accept-Encoding\r\n\r\n<!DOCTYPE\x20html>\n<
+SF:html\x20lang=\"en\"\x20dir=\"ltr\">\n<meta\x20http-equiv=\"Content-Type
+SF:\"\x20content=\"text/html;\x20charset=utf-8\">\n<meta\x20name=\"robots\
+SF:"\x20content=\"noindex\">\n<meta\x20name=\"viewport\"\x20conte")%r(Four
+SF:OhFourRequest,17B4,"HTTP/1\.0\x20200\x20OK\r\nDate:\x20Mon,\x2011\x20Ma
+SF:y\x202026\x2007:55:25\x20GMT\r\nConnection:\x20close\r\nX-Powered-By:\x
+SF:20PHP/8\.4\.21\r\nSet-Cookie:\x20adminer_sid=afb74273713876fea295119d97
+SF:293c77;\x20path=/nice%20ports%2C/Tri%6Eity\.txt%2ebak;\x20HttpOnly\r\nS
+SF:et-Cookie:\x20adminer_key=3b7d89adc6a2b23b84f00924433693e2;\x20path=/ni
+SF:ce%20ports%2C/Tri%6Eity\.txt%2ebak;\x20HttpOnly;\x20SameSite=lax\r\nCon
+SF:tent-Type:\x20text/html;\x20charset=utf-8\r\nCache-Control:\x20no-cache
+SF:\r\nX-Frame-Options:\x20deny\r\nX-XSS-Protection:\x200\r\nX-Content-Typ
+SF:e-Options:\x20nosniff\r\nReferrer-Policy:\x20origin-when-cross-origin\r
+SF:\nContent-Security-Policy:\x20script-src\x20'self'\x20'unsafe-inline'\x
+SF:20'nonce-YTg5ZGJiZTRlNzg5ZTk3ODgwMzZkMWViMDllYjQ4MGE='\x20'strict-dynam
+SF:ic';\x20connect-src\x20'self'\x20https://www\.adminer\.org;\x20frame-sr
+SF:c\x20'none';\x20object-src\x20'none';\x20base-uri\x20'none';\x20form-ac
+SF:tion\x20'self'\r\nVary:\x20Accept-Encoding\r\n\r\n<!DOCTYPE\x20html>\n<
+SF:html\x20lang=\"en\"\x20dir=\"ltr\">\n<meta\x20http-equiv=\"Content-Type
+SF:\"\x20content=\"text/html;\x20charset=utf-");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon May 11 15:55:38 2026 -- 1 IP address (1 host up) scanned in 19.53 seconds

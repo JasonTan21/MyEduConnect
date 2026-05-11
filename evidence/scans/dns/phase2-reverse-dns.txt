@@ -1,0 +1,20 @@
+
+; <<>> DiG 9.20.22-1-Debian <<>> -x 192.168.0.92
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 46826
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;92.0.168.192.in-addr.arpa.	IN	PTR
+
+;; AUTHORITY SECTION:
+168.192.in-addr.arpa.	767	IN	SOA	prisoner.iana.org. hostmaster.root-servers.org. 1 604800 60 604800 604800
+
+;; Query time: 27 msec
+;; SERVER: 192.168.64.1#53(192.168.64.1) (UDP)
+;; WHEN: Mon May 11 16:20:21 +08 2026
+;; MSG SIZE  rcvd: 131
+
