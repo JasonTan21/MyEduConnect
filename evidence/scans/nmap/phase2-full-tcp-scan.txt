@@ -1,0 +1,17 @@
+# Nmap 7.99 scan initiated Mon May 11 15:47:00 2026 as: nmap -p- --min-rate 3000 192.168.0.92 -oN phase2-full-tcp-scan.txt
+Nmap scan report for 192.168.0.92
+Host is up (0.00056s latency).
+Not shown: 65525 filtered tcp ports (no-response)
+PORT      STATE SERVICE
+22/tcp    open  ssh
+53/tcp    open  domain
+2222/tcp  open  EtherNetIP-1
+3306/tcp  open  mysql
+5000/tcp  open  upnp
+5001/tcp  open  commplex-link
+7000/tcp  open  afs3-fileserver
+8080/tcp  open  http-proxy
+8081/tcp  open  blackice-icecap
+60394/tcp open  unknown
+
+# Nmap done at Mon May 11 15:47:44 2026 -- 1 IP address (1 host up) scanned in 44.43 seconds

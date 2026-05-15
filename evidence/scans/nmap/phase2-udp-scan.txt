@@ -1,0 +1,13 @@
+# Nmap 7.99 scan initiated Mon May 11 15:50:00 2026 as: sudo nmap -sU 192.168.0.92
+Nmap scan report for 192.168.0.92
+Host is up (0.00090s latency).
+Not shown: 994 closed udp ports (port-unreach)
+PORT      STATE         SERVICE
+53/udp    open|filtered domain
+67/udp    open|filtered dhcps
+137/udp   open          netbios-ns
+138/udp   open|filtered netbios-dgm
+5353/udp  open|filtered zeroconf
+49161/udp open|filtered unknown
+
+# Nmap done at Mon May 11 15:50:54 2026 -- 1 IP address (1 host up) scanned in 54.25 seconds
