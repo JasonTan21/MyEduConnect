@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+Server: Werkzeug/3.1.8 Python/3.12.13
+Date: Sat, 16 May 2026 05:43:44 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 1912
+Server: MyEduConnect-Legacy/1.0
+X-Powered-By: Flask-Debug-Lab
+Connection: close
+

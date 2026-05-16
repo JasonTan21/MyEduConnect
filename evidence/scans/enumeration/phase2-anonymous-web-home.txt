@@ -1,0 +1,77 @@
+HTTP/1.1 200 OK
+Server: Werkzeug/3.1.8 Python/3.12.13
+Date: Sat, 16 May 2026 06:06:39 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 1912
+Server: MyEduConnect-Legacy/1.0
+X-Powered-By: Flask-Debug-Lab
+Connection: close
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MyEduConnect</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">MyEduConnect</a>
+    <nav>
+      <a href="/courses">Courses</a>
+      
+        <a href="/login">Login</a>
+        <a class="button small" href="/register">Register</a>
+      
+    </nav>
+  </header>
+  <main>
+    
+<section class="hero">
+  <div>
+    <h1>Connected learning for Malaysian schools</h1>
+    <p>Course discovery, enrolment, assessments, payment workflow, and administrator oversight in one intentionally vulnerable training platform.</p>
+    <div class="actions">
+      <a class="button" href="/courses">Browse courses</a>
+      <a class="button secondary" href="/login">Staff login</a>
+    </div>
+  </div>
+  <div class="hero-panel">
+    <strong>Demo accounts</strong>
+    <p>Admin: admin@myeduconnect.local / admin123</p>
+    <p>Student: aina@student.local / student123</p>
+    <p>SSH: student / student123 on port 2222</p>
+  </div>
+</section>
+<section>
+  <h2>Featured courses</h2>
+  <div class="grid">
+    
+      <article class="card">
+        <span>MATH101</span>
+        <h3>Modern Mathematics Booster</h3>
+        <p>Exam-focused modules, quizzes, and teacher feedback.</p>
+        <strong>RM 49.90</strong>
+      </article>
+    
+      <article class="card">
+        <span>SCI220</span>
+        <h3>Interactive Science Lab</h3>
+        <p>Simulated experiments and assessment packs.</p>
+        <strong>RM 59.90</strong>
+      </article>
+    
+      <article class="card">
+        <span>ENG130</span>
+        <h3>Academic English Writing</h3>
+        <p>Guided writing practice and rubric-based marking.</p>
+        <strong>RM 39.90</strong>
+      </article>
+    
+  </div>
+</section>
+
+  </main>
+</body>
+</html>

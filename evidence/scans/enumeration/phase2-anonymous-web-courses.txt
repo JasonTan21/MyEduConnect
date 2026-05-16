@@ -1,0 +1,220 @@
+HTTP/1.1 200 OK
+Server: Werkzeug/3.1.8 Python/3.12.13
+Date: Sat, 16 May 2026 06:09:03 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 6287
+Server: MyEduConnect-Legacy/1.0
+X-Powered-By: Flask-Debug-Lab
+Connection: close
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MyEduConnect</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">MyEduConnect</a>
+    <nav>
+      <a href="/courses">Courses</a>
+      
+        <a href="/login">Login</a>
+        <a class="button small" href="/register">Register</a>
+      
+    </nav>
+  </header>
+  <main>
+    
+<section>
+  <h1>Course catalogue</h1>
+  <form class="search" method="get">
+    <input name="q" value="" placeholder="Search course code or title">
+    <button class="button" type="submit">Search</button>
+  </form>
+  <div class="grid">
+    
+      <article class="card">
+        <span>ACC180</span>
+        <h3>Principles of Accounting</h3>
+        <p>Journal entries, ledgers, trial balance, and financial statement preparation.</p>
+        <strong>RM 49.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>ADD201</span>
+        <h3>Additional Mathematics Sprint</h3>
+        <p>Focused practice for functions, calculus, trigonometry, and probability.</p>
+        <strong>RM 74.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>ART115</span>
+        <h3>Creative Design Foundations</h3>
+        <p>Color, layout, typography, and portfolio exercises for young designers.</p>
+        <strong>RM 39.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>BIO205</span>
+        <h3>Biology Visual Revision</h3>
+        <p>Diagram-led learning for cells, genetics, ecosystems, and human systems.</p>
+        <strong>RM 54.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>BM110</span>
+        <h3>Bahasa Melayu Karangan Mastery</h3>
+        <p>Step-by-step essay planning, grammar drills, and guided model answers.</p>
+        <strong>RM 34.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>BUS190</span>
+        <h3>Young Entrepreneur Toolkit</h3>
+        <p>Business model basics, budgeting, marketing, and pitch preparation.</p>
+        <strong>RM 54.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>CAREER80</span>
+        <h3>University and Career Readiness</h3>
+        <p>Pathway planning, personal statements, interview practice, and scholarship prep.</p>
+        <strong>RM 29.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>CHEM215</span>
+        <h3>Chemistry Formula Clinic</h3>
+        <p>Structured lessons for mole concepts, salts, acids, and organic chemistry.</p>
+        <strong>RM 64.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>CS150</span>
+        <h3>Introductory Python</h3>
+        <p>Beginner-friendly coding lessons for school learners.</p>
+        <strong>RM 69.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>CS220</span>
+        <h3>Web Development Basics</h3>
+        <p>HTML, CSS, JavaScript, and simple project-based website building.</p>
+        <strong>RM 79.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>CS260</span>
+        <h3>Cybersecurity Awareness</h3>
+        <p>Password safety, phishing recognition, privacy, and secure online habits.</p>
+        <strong>RM 59.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>DATA210</span>
+        <h3>Data Skills with Spreadsheets</h3>
+        <p>Data cleaning, formulas, charts, pivot tables, and simple dashboards.</p>
+        <strong>RM 49.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>ECO170</span>
+        <h3>Economics Fundamentals</h3>
+        <p>Micro and macro concepts explained with Malaysian market examples.</p>
+        <strong>RM 39.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>ENG130</span>
+        <h3>Academic English Writing</h3>
+        <p>Guided writing practice and rubric-based marking.</p>
+        <strong>RM 39.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>GEO140</span>
+        <h3>Geography Fieldwork Prep</h3>
+        <p>Map skills, physical geography, human geography, and fieldwork reporting.</p>
+        <strong>RM 34.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>ICT160</span>
+        <h3>Digital Literacy and Productivity</h3>
+        <p>Safe computing, office productivity, collaboration tools, and digital citizenship.</p>
+        <strong>RM 29.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>LAW100</span>
+        <h3>Digital Rights and PDPA Basics</h3>
+        <p>Introductory privacy, consent, data protection, and responsible platform use.</p>
+        <strong>RM 44.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>MATH101</span>
+        <h3>Modern Mathematics Booster</h3>
+        <p>Exam-focused modules, quizzes, and teacher feedback.</p>
+        <strong>RM 49.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>PHY210</span>
+        <h3>Physics Problem Solving</h3>
+        <p>Forces, waves, electricity, and exam-style calculation walkthroughs.</p>
+        <strong>RM 64.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>SCI220</span>
+        <h3>Interactive Science Lab</h3>
+        <p>Simulated experiments and assessment packs.</p>
+        <strong>RM 59.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>SEJ125</span>
+        <h3>Sejarah SPM Intensive</h3>
+        <p>Timeline-based revision, KBAT practice, and topic-by-topic exam notes.</p>
+        <strong>RM 44.90</strong>
+        
+      </article>
+    
+      <article class="card">
+        <span>STUDY90</span>
+        <h3>Study Skills and Exam Strategy</h3>
+        <p>Time management, active recall, note-taking, and stress-aware revision planning.</p>
+        <strong>RM 24.90</strong>
+        
+      </article>
+    
+  </div>
+</section>
+
+  </main>
+</body>
+</html>

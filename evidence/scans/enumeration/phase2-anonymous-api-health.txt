@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+Server: Werkzeug/3.1.8 Python/3.12.13
+Date: Sat, 16 May 2026 06:14:10 GMT
+Content-Type: application/json
+Content-Length: 54
+Connection: close
+
+{
+  "service": "myeduconnect-api",
+  "status": "ok"
+}

@@ -1,0 +1,15 @@
+HTTP/1.0 200 OK
+Date: Sat, 16 May 2026 05:47:35 GMT
+Connection: close
+X-Powered-By: PHP/8.4.21
+Set-Cookie: adminer_sid=75fe178697d052e988b9c881eae82144; path=/; HttpOnly
+Set-Cookie: adminer_key=7127dbe81bc4746dd51213feba91b37b; path=/; HttpOnly; SameSite=lax
+Content-Type: text/html; charset=utf-8
+Cache-Control: no-cache
+X-Frame-Options: deny
+X-XSS-Protection: 0
+X-Content-Type-Options: nosniff
+Referrer-Policy: origin-when-cross-origin
+Content-Security-Policy: script-src 'self' 'unsafe-inline' 'nonce-NTU2MGRjYTRmZTljMzViMDU4NWU4ZTIzNzY4MTczNmU=' 'strict-dynamic'; connect-src 'self' https://www.adminer.org; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'
+Vary: Accept-Encoding
+

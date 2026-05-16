@@ -1,0 +1,15 @@
+HTTP/1.1 302 FOUND
+Server: Werkzeug/3.1.8 Python/3.12.13
+Date: Sat, 16 May 2026 06:10:49 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 199
+Location: /login
+Server: MyEduConnect-Legacy/1.0
+X-Powered-By: Flask-Debug-Lab
+Connection: close
+
+<!doctype html>
+<html lang=en>
+<title>Redirecting...</title>
+<h1>Redirecting...</h1>
+<p>You should be redirected automatically to the target URL: <a href="/login">/login</a>. If not, click the link.

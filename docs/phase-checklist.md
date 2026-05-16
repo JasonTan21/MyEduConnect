@@ -17,12 +17,14 @@
 
 ## Phase 2: Reconnaissance and Enumeration
 
-Recommended evidence to collect:
+Status: complete. Detailed findings and evidence references are documented in `docs/phase2-findings.md` and `docs/phase2-checklist.md`.
 
-- OSINT/footprinting: create fictional MyEduConnect profile findings from local service pages, headers, repository metadata, DNS/hosts entries if added, and search-style reconnaissance notes.
-- TCP/UDP Nmap scan against `localhost` or the VM IP.
-- Service enumeration for HTTP `8080`, Adminer `8081`, API `5001`, SSH `2222`, and MySQL `3306`.
-- Save raw outputs in `evidence/scans`.
+- OSINT/footprinting completed with WHOIS, DNS, reverse DNS, theHarvester, WhatWeb, and search-engine reconnaissance.
+- At least 10 intelligence findings documented.
+- TCP and UDP Nmap scans completed against target IP `192.168.0.92`.
+- Service enumeration completed for HTTP `8080`, Adminer `8081`, API `5001`, SSH `2222`, and MySQL `3306`.
+- Banner grabbing, default-credential checks, and anonymous-access checks completed.
+- Raw outputs and screenshots saved under `evidence/scans`.
 
 ## Phase 3: Vulnerability Assessment and Sniffing
 

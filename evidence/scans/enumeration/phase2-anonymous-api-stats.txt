@@ -1,0 +1,10 @@
+HTTP/1.1 403 FORBIDDEN
+Server: Werkzeug/3.1.8 Python/3.12.13
+Date: Sat, 16 May 2026 06:12:14 GMT
+Content-Type: application/json
+Content-Length: 33
+Connection: close
+
+{
+  "error": "invalid api key"
+}
