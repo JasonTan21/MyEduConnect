@@ -8,6 +8,9 @@ from docx.shared import Cm, Inches, Pt, RGBColor
 
 
 OUT = "docs/Phase6_Phase1_Phase2_Draft.docx"
+HEADER_BLUE = "1F4E79"
+BORDER_BLUE = "B9CBE0"
+MAX_TABLE_WIDTH_IN = 6.55
 
 
 def set_cell_shading(cell, fill):
@@ -33,13 +36,13 @@ def set_cell_margins(cell, top=100, start=100, bottom=100, end=100):
         node.set(qn("w:type"), "dxa")
 
 
-def set_table_borders(table, color="D6DEE8", size="4"):
-    tbl = table._tbl
-    tbl_pr = tbl.tblPr
-    borders = tbl_pr.first_child_found_in("w:tblBorders")
-    if borders is None:
-        borders = OxmlElement("w:tblBorders")
-        tbl_pr.append(borders)
+def set_cell_borders(cell, color=BORDER_BLUE, size="4"):
+    tc_pr = cell._tc.get_or_add_tcPr()
+    borders = tc_pr.first_child_found_in("w:tcBorders")
+    if borders is not None:
+        tc_pr.remove(borders)
+    borders = OxmlElement("w:tcBorders")
+    tc_pr.append(borders)
     for edge in ["top", "left", "bottom", "right", "insideH", "insideV"]:
         tag = OxmlElement(f"w:{edge}")
         tag.set(qn("w:val"), "single")
@@ -47,6 +50,50 @@ def set_table_borders(table, color="D6DEE8", size="4"):
         tag.set(qn("w:space"), "0")
         tag.set(qn("w:color"), color)
         borders.append(tag)
+
+
+def set_table_borders(table, color="D6DEE8", size="4"):
+    tbl = table._tbl
+    tbl_pr = tbl.tblPr
+    borders = tbl_pr.first_child_found_in("w:tblBorders")
+    if borders is not None:
+        tbl_pr.remove(borders)
+    borders = OxmlElement("w:tblBorders")
+    tbl_pr.append(borders)
+    for edge in ["top", "left", "bottom", "right", "insideH", "insideV"]:
+        tag = OxmlElement(f"w:{edge}")
+        tag.set(qn("w:val"), "single")
+        tag.set(qn("w:sz"), size)
+        tag.set(qn("w:space"), "0")
+        tag.set(qn("w:color"), color)
+        borders.append(tag)
+
+
+def set_table_width(table, width_in=MAX_TABLE_WIDTH_IN):
+    width_twips = int(width_in * 1440)
+    tbl_pr = table._tbl.tblPr
+    tbl_w = tbl_pr.first_child_found_in("w:tblW")
+    if tbl_w is None:
+        tbl_w = OxmlElement("w:tblW")
+        tbl_pr.append(tbl_w)
+    tbl_w.set(qn("w:w"), str(width_twips))
+    tbl_w.set(qn("w:type"), "dxa")
+
+    layout = tbl_pr.first_child_found_in("w:tblLayout")
+    if layout is None:
+        layout = OxmlElement("w:tblLayout")
+        tbl_pr.append(layout)
+    layout.set(qn("w:type"), "fixed")
+
+
+def normalize_widths(widths):
+    if not widths:
+        return None
+    total = sum(w.inches for w in widths)
+    if total <= MAX_TABLE_WIDTH_IN:
+        return widths
+    scale = MAX_TABLE_WIDTH_IN / total
+    return [Inches(w.inches * scale) for w in widths]
 
 
 def set_repeat_table_header(row):
@@ -74,21 +121,25 @@ def set_cell_text(cell, text, bold=False, color=None):
 
 
 def add_table(doc, headers, rows, widths=None, font_size=9.3):
+    widths = normalize_widths(widths)
     table = doc.add_table(rows=1, cols=len(headers))
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
-    set_table_borders(table)
+    set_table_borders(table, color=BORDER_BLUE)
+    set_table_width(table)
     hdr = table.rows[0]
     set_repeat_table_header(hdr)
     for i, header in enumerate(headers):
         set_cell_text(hdr.cells[i], header, bold=True, color="FFFFFF")
-        set_cell_shading(hdr.cells[i], "1F4E79")
+        set_cell_shading(hdr.cells[i], HEADER_BLUE)
+        set_cell_borders(hdr.cells[i], color=HEADER_BLUE)
         if widths:
             hdr.cells[i].width = widths[i]
     for row in rows:
         cells = table.add_row().cells
         for i, val in enumerate(row):
             set_cell_text(cells[i], val)
+            set_cell_borders(cells[i], color=BORDER_BLUE)
             if widths:
                 cells[i].width = widths[i]
             for p in cells[i].paragraphs:
@@ -99,17 +150,25 @@ def add_table(doc, headers, rows, widths=None, font_size=9.3):
 
 
 def add_kv_table(doc, pairs, label_width=1.75, value_width=5.75):
+    total = label_width + value_width
+    if total > MAX_TABLE_WIDTH_IN:
+        scale = MAX_TABLE_WIDTH_IN / total
+        label_width *= scale
+        value_width *= scale
     table = doc.add_table(rows=0, cols=2)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
-    set_table_borders(table, color="DFE7F0")
+    set_table_borders(table, color=BORDER_BLUE)
+    set_table_width(table)
     for label, value in pairs:
         cells = table.add_row().cells
         cells[0].width = Inches(label_width)
         cells[1].width = Inches(value_width)
         set_cell_text(cells[0], label, bold=True)
         set_cell_shading(cells[0], "EAF1F8")
+        set_cell_borders(cells[0], color=BORDER_BLUE)
         set_cell_text(cells[1], value)
+        set_cell_borders(cells[1], color=BORDER_BLUE)
     doc.add_paragraph()
     return table
 
