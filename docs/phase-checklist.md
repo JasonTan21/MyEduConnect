@@ -1,6 +1,6 @@
 # Phase Checklist
 
-## Phase 1: Build
+## Phase 1: Build the Vulnerable Environment
 
 - Working web learning portal: done.
 - Registration/login/profile: done.
