@@ -43,7 +43,7 @@ Suggested exploit coverage:
 - Stored XSS: profile bio or admin announcement.
 - IDOR: `/invoice/<payment_id>`.
 - Server/OS: SSH weak credentials, exposed Adminer/MySQL.
-- Privilege escalation: demonstrate access from SSH user to sensitive app files/configuration or exposed DB credentials, then explain impact.
+- Privilege escalation: demonstrate SSH foothold as `student`, modify the writable `/usr/local/bin/myedu-backup` maintenance script, run it with passwordless sudo, and prove root access with `whoami`.
 - Network-layer: capture the cleartext API key and replay the API request.
 - Post-exploitation: extract redacted sample data from MySQL or create a controlled test persistence account.
 
