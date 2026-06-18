@@ -1,15 +1,40 @@
 import hashlib
 import os
+import secrets
 import time
 from functools import wraps
 
 import pymysql
 import requests
 from flask import Flask, make_response, redirect, render_template, request, send_from_directory, url_for
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = os.path.join(os.path.dirname(__file__), "uploads")
 app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024
+
+# ---------------------------------------------------------------------------
+# Vulnerable / Secure mode switch.
+# An in-app toggle so the same app can demo Phase 4 (exploitable) and Phase 5
+# (remediated) behaviour. The switch only controls APPLICATION-LAYER findings
+# (E1-E6, E11 key, E12 hashing). OS/infra findings (E7-E10) are build-time.
+# ---------------------------------------------------------------------------
+STATE = {"secure": os.getenv("SECURE_MODE", "0").lower() in ("1", "true", "yes", "on")}
+# When locked (hardened deployment), the mode cannot be flipped back to vulnerable from the UI.
+LOCK_MODE = os.getenv("LOCK_MODE", "0").lower() in ("1", "true", "yes", "on")
+API_BASE = os.getenv("API_BASE", "http://api:5001")
+API_VULN_KEY = os.getenv("API_SHARED_KEY", "demo-api-key")
+API_SECURE_KEY = os.getenv("API_SECURE_KEY", "s3cure-rotated-key-change-me-1f9b2d")
+ALLOWED_UPLOAD_EXT = {".png", ".jpg", ".jpeg", ".gif", ".pdf", ".txt"}
+
+
+def secure_mode():
+    return STATE["secure"]
+
+
+@app.context_processor
+def inject_mode():
+    return {"secure_mode": STATE["secure"], "mode_locked": LOCK_MODE}
 
 
 def db():
@@ -24,11 +49,12 @@ def db():
     )
 
 
-def query(sql):
+def query(sql, args=None):
     conn = db()
     try:
         with conn.cursor() as cur:
-            cur.execute(sql)
+            # Pass args only when provided so literal '%' in raw SQL isn't treated as a placeholder.
+            cur.execute(sql, args) if args is not None else cur.execute(sql)
             return cur.fetchall()
     finally:
         conn.close()
@@ -38,27 +64,43 @@ def execute(sql, args=None):
     conn = db()
     try:
         with conn.cursor() as cur:
-            cur.execute(sql, args or ())
+            cur.execute(sql, args) if args is not None else cur.execute(sql)
             return cur.lastrowid
     finally:
         conn.close()
 
 
 def password_hash(password):
+    # Weak unsalted MD5 (E12) — used for seeding and for vulnerable-mode auth.
     return hashlib.md5(password.encode()).hexdigest()
 
 
 def make_session(user_id):
-    # Deliberately predictable: useful for the cryptography/session weakness requirement.
+    if STATE["secure"]:
+        # Secure: random, server-side token (fixes E5).
+        token = secrets.token_urlsafe(32)
+        execute("INSERT INTO sessions (token, user_id, created_at) VALUES (%s,%s,%s)", (token, user_id, int(time.time())))
+        return token
+    # Vulnerable: predictable and forgeable `user_id-minute` (E5).
     return f"{user_id}-{int(time.time() // 60)}"
 
 
 def current_user():
     token = request.cookies.get("session_id")
-    if not token or "-" not in token:
+    if not token:
+        return None
+    if STATE["secure"]:
+        # Secure: look the random token up server-side (fixes E5 + cookie SQLi).
+        rows = query("SELECT u.* FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = %s", (token,))
+        return rows[0] if rows else None
+    # Vulnerable: trust the id embedded in the cookie and concatenate it (E5 + SQLi).
+    if "-" not in token:
         return None
     user_id = token.split("-", 1)[0]
-    users = query(f"SELECT * FROM users WHERE id = {user_id}")
+    try:
+        users = query(f"SELECT * FROM users WHERE id = {user_id}")
+    except Exception:
+        return None
     return users[0] if users else None
 
 
@@ -81,6 +123,13 @@ def admin_required(fn):
         return fn(*args, **kwargs)
 
     return wrapper
+
+
+def sync_api_mode():
+    try:
+        requests.post(f"{API_BASE}/mode", json={"secure": STATE["secure"]}, timeout=3)
+    except Exception:
+        pass
 
 
 def init_db():
@@ -151,6 +200,20 @@ def init_db():
         )
         """
     )
+    # Secure-mode session store and salted-hash column (additive; safe on existing volumes).
+    execute(
+        """
+        CREATE TABLE IF NOT EXISTS sessions (
+            token VARCHAR(64) PRIMARY KEY,
+            user_id INT,
+            created_at INT
+        )
+        """
+    )
+    try:
+        execute("ALTER TABLE users ADD COLUMN password_secure VARCHAR(255)")
+    except Exception:
+        pass
     if not query("SELECT id FROM users LIMIT 1"):
         execute(
             "INSERT INTO users (name,email,password_hash,role,bio,guardian_phone) VALUES (%s,%s,%s,%s,%s,%s)",
@@ -194,6 +257,25 @@ def init_db():
             "INSERT INTO announcements (author_id,title,body) VALUES (1,%s,%s)",
             ("Welcome to MyEduConnect", "Trial learning portal for the CCS6324 final assignment."),
         )
+    # Backfill salted hashes for the seeded accounts so secure-mode login works on existing volumes.
+    for email, pw in {
+        "admin@myeduconnect.local": "admin123",
+        "aina@student.local": "student123",
+        "teacher@school.local": "teacher123",
+    }.items():
+        execute(
+            "UPDATE users SET password_secure=%s WHERE email=%s AND (password_secure IS NULL OR password_secure='')",
+            (generate_password_hash(pw), email),
+        )
+
+
+@app.route("/mode", methods=["POST"])
+def mode():
+    if LOCK_MODE:
+        return "Mode is locked for this deployment", 403
+    STATE["secure"] = request.form.get("secure", "") == "1"
+    sync_api_mode()
+    return redirect(request.referrer or url_for("index"))
 
 
 @app.route("/")
@@ -207,11 +289,12 @@ def index():
 def register():
     if request.method == "POST":
         execute(
-            "INSERT INTO users (name,email,password_hash,bio,guardian_phone) VALUES (%s,%s,%s,%s,%s)",
+            "INSERT INTO users (name,email,password_hash,password_secure,bio,guardian_phone) VALUES (%s,%s,%s,%s,%s,%s)",
             (
                 request.form["name"],
                 request.form["email"],
                 password_hash(request.form["password"]),
+                generate_password_hash(request.form["password"]),
                 request.form.get("bio", ""),
                 request.form.get("guardian_phone", ""),
             ),
@@ -225,12 +308,25 @@ def login():
     error = None
     if request.method == "POST":
         email = request.form["email"]
-        pwd = password_hash(request.form["password"])
-        # Deliberately vulnerable SQL concatenation for SQL injection exercises.
-        users = query(f"SELECT * FROM users WHERE email = '{email}' AND password_hash = '{pwd}'")
-        if users:
+        password = request.form["password"]
+        user = None
+        if STATE["secure"]:
+            # Secure: parameterized lookup by email, verify a salted/slow hash (fixes E1 + E12).
+            rows = query("SELECT * FROM users WHERE email = %s", (email,))
+            if rows and rows[0].get("password_secure") and check_password_hash(rows[0]["password_secure"], password):
+                user = rows[0]
+        else:
+            # Vulnerable: string-concatenated SQL + unsalted MD5 (E1).
+            pwd = password_hash(password)
+            rows = query(f"SELECT * FROM users WHERE email = '{email}' AND password_hash = '{pwd}'")
+            user = rows[0] if rows else None
+        if user:
             resp = make_response(redirect(url_for("dashboard")))
-            resp.set_cookie("session_id", make_session(users[0]["id"]), httponly=False, secure=False, samesite=None)
+            if STATE["secure"]:
+                # Secure flags (Secure left off because the lab runs on plain HTTP).
+                resp.set_cookie("session_id", make_session(user["id"]), httponly=True, secure=False, samesite="Lax")
+            else:
+                resp.set_cookie("session_id", make_session(user["id"]), httponly=False, secure=False, samesite=None)
             return resp
         error = "Invalid login"
     return render_template("login.html", user=current_user(), error=error)
@@ -238,6 +334,12 @@ def login():
 
 @app.route("/logout")
 def logout():
+    token = request.cookies.get("session_id")
+    if token:
+        try:
+            execute("DELETE FROM sessions WHERE token = %s", (token,))
+        except Exception:
+            pass
     resp = make_response(redirect(url_for("index")))
     resp.delete_cookie("session_id")
     return resp
@@ -276,8 +378,11 @@ def profile():
 def courses():
     term = request.args.get("q", "")
     if term:
-        # Deliberately vulnerable SQL concatenation for SQL injection exercises.
-        rows = query(f"SELECT * FROM courses WHERE title LIKE '%{term}%' OR code LIKE '%{term}%'")
+        if STATE["secure"]:
+            rows = query("SELECT * FROM courses WHERE title LIKE %s OR code LIKE %s", (f"%{term}%", f"%{term}%"))
+        else:
+            # Vulnerable: search term concatenated into SQL (E2).
+            rows = query(f"SELECT * FROM courses WHERE title LIKE '%{term}%' OR code LIKE '%{term}%'")
     else:
         rows = query("SELECT * FROM courses ORDER BY code")
     return render_template("courses.html", user=current_user(), courses=rows, term=term)
@@ -341,19 +446,33 @@ def payment(course_id):
 @app.route("/invoice/<int:payment_id>")
 @login_required
 def invoice(payment_id):
-    # Deliberately missing ownership check for IDOR exercises.
-    rows = query(
-        f"""
-        SELECT p.*, u.name, u.email, c.code, c.title
-        FROM payments p
-        JOIN users u ON u.id = p.user_id
-        JOIN courses c ON c.id = p.course_id
-        WHERE p.id = {payment_id}
-        """
-    )
+    user = current_user()
+    if STATE["secure"]:
+        # Secure: enforce ownership (admins may view any) — fixes E4 (IDOR).
+        rows = query(
+            """
+            SELECT p.*, u.name, u.email, c.code, c.title
+            FROM payments p
+            JOIN users u ON u.id = p.user_id
+            JOIN courses c ON c.id = p.course_id
+            WHERE p.id = %s AND (p.user_id = %s OR %s = 'admin')
+            """,
+            (payment_id, user["id"], user["role"]),
+        )
+    else:
+        # Vulnerable: no ownership check (E4 / IDOR).
+        rows = query(
+            f"""
+            SELECT p.*, u.name, u.email, c.code, c.title
+            FROM payments p
+            JOIN users u ON u.id = p.user_id
+            JOIN courses c ON c.id = p.course_id
+            WHERE p.id = {payment_id}
+            """
+        )
     if not rows:
         return "Invoice not found", 404
-    return render_template("invoice.html", user=current_user(), invoice=rows[0])
+    return render_template("invoice.html", user=user, invoice=rows[0])
 
 
 @app.route("/support", methods=["GET", "POST"])
@@ -363,30 +482,44 @@ def support():
     if request.method == "POST":
         file = request.files.get("attachment")
         if file and file.filename:
-            # Deliberately no extension/content validation.
-            dest = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
-            file.save(dest)
+            if STATE["secure"]:
+                # Secure: allow-list extension and randomise the stored name (fixes E6).
+                ext = os.path.splitext(file.filename)[1].lower()
+                if ext not in ALLOWED_UPLOAD_EXT:
+                    return "File type not allowed", 400
+                stored = f"{secrets.token_hex(16)}{ext}"
+            else:
+                # Vulnerable: keep the attacker-supplied filename/extension (E6).
+                stored = file.filename
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], stored))
             execute(
                 "INSERT INTO support_files (user_id, filename, original_name) VALUES (%s,%s,%s)",
-                (user["id"], file.filename, file.filename),
+                (user["id"], stored, file.filename),
             )
         return redirect(url_for("support"))
-    files = query(f"SELECT * FROM support_files WHERE user_id = {user['id']} ORDER BY id DESC")
+    files = query("SELECT * FROM support_files WHERE user_id = %s ORDER BY id DESC", (user["id"],))
     return render_template("support.html", user=user, files=files)
 
 
 @app.route("/uploads/<path:filename>")
 def uploaded_file(filename):
+    if STATE["secure"]:
+        # Secure: require auth, force download, disable content sniffing (fixes E6 exposure).
+        if not current_user():
+            return redirect(url_for("login"))
+        resp = make_response(send_from_directory(app.config["UPLOAD_FOLDER"], filename, as_attachment=True))
+        resp.headers["X-Content-Type-Options"] = "nosniff"
+        return resp
+    # Vulnerable: public, inline, served by content type (E6).
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 @app.route("/api-summary")
 @login_required
 def api_summary():
-    api_base = os.getenv("API_BASE", "http://api:5001")
-    headers = {"X-API-Key": os.getenv("API_SHARED_KEY", "demo-api-key")}
-    response = requests.get(f"{api_base}/internal/stats", headers=headers, timeout=5)
-    return render_template("api_summary.html", user=current_user(), stats=response.json(), api_base=api_base)
+    key = API_SECURE_KEY if STATE["secure"] else API_VULN_KEY
+    response = requests.get(f"{API_BASE}/internal/stats", headers={"X-API-Key": key}, timeout=5)
+    return render_template("api_summary.html", user=current_user(), stats=response.json(), api_base=API_BASE)
 
 
 @app.route("/admin", methods=["GET", "POST"])
@@ -405,9 +538,18 @@ def admin():
 
 
 @app.after_request
-def weak_headers(response):
-    response.headers["Server"] = "MyEduConnect-Legacy/1.0"
-    response.headers["X-Powered-By"] = "Flask-Debug-Lab"
+def apply_headers(response):
+    if STATE["secure"]:
+        # Defence-in-depth headers (also blunts XSS) for the hardened/secure path.
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Content-Security-Policy"] = "default-src 'self'"
+        response.headers.pop("X-Powered-By", None)
+        response.headers.pop("Server", None)
+    else:
+        # Vulnerable: misleading/info-leaking headers.
+        response.headers["Server"] = "MyEduConnect-Legacy/1.0"
+        response.headers["X-Powered-By"] = "Flask-Debug-Lab"
     return response
 
 
@@ -420,4 +562,5 @@ if __name__ == "__main__":
         except Exception as exc:
             print(f"Waiting for database: {exc}")
             time.sleep(2)
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    sync_api_mode()
+    app.run(host="0.0.0.0", port=8080, debug=os.getenv("FLASK_DEBUG", "1") == "1")

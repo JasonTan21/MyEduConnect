@@ -1,0 +1,78 @@
+# Hardened stack for Phase 5 remediation / re-test.
+# Run ONE stack at a time (this publishes web on the same 8080 as the vulnerable stack,
+# so the re-test URLs match Phase 4 exactly):
+#   docker compose down                                   # stop the vulnerable stack
+#   docker compose -f docker-compose.secure.yml up -d --build
+#
+# Remediations vs. the vulnerable stack:
+#   E7  no SSH server, no 2222 published, no default shell creds   (web/Dockerfile.secure)
+#   E8  MySQL 3306 NOT published, Adminer removed, strong unique DB creds
+#   E9  upload dir not world-writable, app runs as non-root        (web/Dockerfile.secure)
+#   E10 no sudo NOPASSWD backup script                             (web/Dockerfile.secure)
+#   E11 API 5001 NOT published; strong rotated key; locked secure mode (no demo-api-key)
+#   E1-E6, E12  app runs in SECURE_MODE=1 with LOCK_MODE=1 (cannot be toggled back)
+name: myeduconnect-secure
+
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.secure
+    container_name: myeduconnect-web-secure
+    ports:
+      - "8080:8080"
+    environment:
+      APP_ENV: hardened
+      SECURE_MODE: "1"
+      LOCK_MODE: "1"
+      FLASK_DEBUG: "0"
+      DB_HOST: db
+      DB_USER: myedu
+      DB_PASSWORD: "M9#kQ2vL!pX7sZ4r"
+      DB_NAME: myeduconnect
+      API_BASE: http://api:5001
+      API_SECURE_KEY: "9f2c1a7e4b6d8051c3a9e7f20b4d6a18e5c7290fbd31486a"
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+  api:
+    build: ./api
+    container_name: myeduconnect-api-secure
+    # No published ports: the API is only reachable on the internal network (fixes E11/E8 exposure).
+    environment:
+      SECURE_MODE: "1"
+      DB_HOST: db
+      DB_USER: myedu
+      DB_PASSWORD: "M9#kQ2vL!pX7sZ4r"
+      DB_NAME: myeduconnect
+      API_SECURE_KEY: "9f2c1a7e4b6d8051c3a9e7f20b4d6a18e5c7290fbd31486a"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: myeduconnect-db-secure
+    # local-infile disabled; strong unique passwords below (fixes E8 weak creds).
+    command: --default-authentication-plugin=mysql_native_password
+    # No published ports: MySQL is not reachable from the host (fixes E8 exposure).
+    environment:
+      MYSQL_ROOT_PASSWORD: "R8$tW5nB!yH3uF6c"
+      MYSQL_DATABASE: myeduconnect
+      MYSQL_USER: myedu
+      MYSQL_PASSWORD: "M9#kQ2vL!pX7sZ4r"
+    volumes:
+      - db_data_secure:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pR8$tW5nB!yH3uF6c"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+# No adminer service (fixes E8 exposed DB GUI).
+
+volumes:
+  db_data_secure:

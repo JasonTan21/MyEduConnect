@@ -1,3 +1,4 @@
+import hmac
 import os
 import time
 
@@ -5,6 +6,11 @@ import pymysql
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
+
+# Mode mirrors the web app (synced via POST /mode). Controls E2-API SQLi and E11 key handling.
+STATE = {"secure": os.getenv("SECURE_MODE", "0").lower() in ("1", "true", "yes", "on")}
+VULN_KEY = os.getenv("API_SHARED_KEY", "demo-api-key")
+SECURE_KEY = os.getenv("API_SECURE_KEY", "s3cure-rotated-key-change-me-1f9b2d")
 
 
 def db():
@@ -18,19 +24,31 @@ def db():
     )
 
 
-def query(sql):
+def query(sql, args=None):
     conn = db()
     try:
         with conn.cursor() as cur:
-            cur.execute(sql)
+            cur.execute(sql, args) if args is not None else cur.execute(sql)
             return cur.fetchall()
     finally:
         conn.close()
 
 
 def require_api_key():
-    # Deliberately static shared key transmitted over cleartext HTTP.
-    return request.headers.get("X-API-Key") == os.getenv("API_SHARED_KEY", "demo-api-key")
+    provided = request.headers.get("X-API-Key", "")
+    if STATE["secure"]:
+        # Secure: strong rotated key, constant-time comparison (fixes E11 replay/guess/timing).
+        return hmac.compare_digest(provided, SECURE_KEY)
+    # Vulnerable: static guessable key over cleartext HTTP (E11).
+    return provided == VULN_KEY
+
+
+@app.route("/mode", methods=["GET", "POST"])
+def mode():
+    if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        STATE["secure"] = bool(data.get("secure"))
+    return {"secure": STATE["secure"]}
 
 
 @app.route("/health")
@@ -56,8 +74,13 @@ def stats():
 def student(student_id):
     if not require_api_key():
         return {"error": "invalid api key"}, 403
-    # Deliberately vulnerable SQL concatenation on the separate REST API.
-    rows = query(f"SELECT id,name,email,role,bio,guardian_phone FROM users WHERE id = {student_id}")
+    if STATE["secure"]:
+        # Secure: parameterized, integer-coerced (fixes E2 API SQLi).
+        sid = int(student_id) if str(student_id).isdigit() else 0
+        rows = query("SELECT id,name,email,role,bio,guardian_phone FROM users WHERE id = %s", (sid,))
+    else:
+        # Vulnerable: path value concatenated into SQL (E2).
+        rows = query(f"SELECT id,name,email,role,bio,guardian_phone FROM users WHERE id = {student_id}")
     return jsonify(rows)
 
 

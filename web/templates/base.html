@@ -26,6 +26,19 @@
       {% endif %}
     </nav>
   </header>
+  <div class="modebar {{ 'mode-secure' if secure_mode else 'mode-vuln' }}">
+    <span class="mode-label">
+      {% if secure_mode %}🔒 SECURE MODE — vulnerabilities patched (Phase 5){% else %}⚠️ VULNERABLE MODE — exploitable (Phase 4){% endif %}
+    </span>
+    {% if mode_locked %}
+      <span class="mode-lock">🔒 mode locked (hardened deployment)</span>
+    {% else %}
+      <form class="inline-form mode-form" method="post" action="{{ url_for('mode') }}">
+        <input type="hidden" name="secure" value="{{ '0' if secure_mode else '1' }}">
+        <button class="mode-toggle" type="submit">Switch to {{ 'Vulnerable' if secure_mode else 'Secure' }} mode</button>
+      </form>
+    {% endif %}
+  </div>
   <main>
     {% block content %}{% endblock %}
   </main>

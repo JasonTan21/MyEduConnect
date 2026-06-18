@@ -34,6 +34,34 @@ body {
   text-decoration: none;
 }
 
+.modebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 40px;
+  color: #fff;
+  font-weight: 800;
+}
+.modebar.mode-vuln { background: #b42318; }
+.modebar.mode-secure { background: #157347; }
+.mode-label { letter-spacing: .3px; }
+.mode-form { display: inline; margin: 0; }
+.mode-toggle {
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 800;
+  cursor: pointer;
+  background: rgba(255, 255, 255, .95);
+  color: #172033;
+}
+.mode-toggle:hover { background: #fff; }
+.mode-lock { font-weight: 800; opacity: .9; }
+@media (max-width: 760px) {
+  .modebar { flex-direction: column; align-items: flex-start; padding: 12px 18px; }
+}
+
 nav {
   display: flex;
   align-items: center;

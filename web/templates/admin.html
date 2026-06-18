@@ -35,7 +35,7 @@
         <td>{{ row.email }}</td>
         <td>{{ row.role }}</td>
         <td>{{ row.guardian_phone }}</td>
-        <td>{{ row.bio | safe }}</td>
+        <td>{% if secure_mode %}{{ row.bio }}{% else %}{{ row.bio | safe }}{% endif %}</td>
       </tr>
     {% endfor %}
   </table>
