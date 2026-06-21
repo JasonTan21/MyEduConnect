@@ -1,55 +1,189 @@
-# MyEduConnect Vulnerable Lab
+# MyEduConnect Security Engagement Lab
 
-This project is a deliberately vulnerable local training platform for the CCS6324 final assignment case study. It represents the fictional MyEduConnect Sdn Bhd learning portal and is designed for authorized testing only inside a local Docker lab.
+MyEduConnect is a Docker-based ethical hacking and penetration testing lab for the CCS6324 final assignment. The platform represents the fictional Malaysian education technology company **MyEduConnect Sdn Bhd** and is intended only for authorized testing in a local lab environment.
 
-## What This Covers
+The project supports the assignment lifecycle: build, reconnaissance, vulnerability assessment, exploitation, hardening, re-testing, reporting, and live demonstration.
 
-- Working web platform: registration, login, profile, course browsing/search, enrolment, mock payment, support uploads, dashboard, admin panel.
-- Backend server: Flask web application with MySQL.
-- Additional component: separate Flask REST API consumed by the web portal.
-- Deployment: Docker Compose with web, API, MySQL, Adminer, and exposed SSH.
-- Deliberate vulnerabilities: OWASP Top 10 web issues, server/OS misconfigurations, crypto weaknesses, and a network-layer cleartext issue.
-- Phase 1 deliverables: architecture diagram, vulnerability matrix, redeployment guide, and source code.
+## Safety Notice
+
+Do not deploy this project to the public internet. The exposed services, weak credentials, vulnerable code paths, insecure transport, and privilege-escalation path are intentional for coursework demonstration.
+
+## Current Main Branch Scope
+
+The current `main` branch contains the vulnerable lab platform and submitted evidence collected by the team.
+
+Implemented platform components:
+
+- Flask web learning portal with registration, login, profile, course catalogue/search, enrolment, mock payment, support upload, dashboard, and admin panel.
+- Separate Flask REST API consumed by the web portal.
+- MySQL 8 database.
+- Adminer database console.
+- SSH service exposed through the web container.
+- Controlled privilege-escalation path through a writable root-run backup script.
+- Evidence folders for Phase 1, Phase 2, and Phase 3.
+
+If the secure/vulnerable toggle version is developed separately, keep it on a clearly named branch such as:
+
+```text
+feature/secure-vulnerable-toggle
+```
+
+Recommended branch meaning:
+
+```text
+main                           Vulnerable lab and evidence baseline
+feature/secure-vulnerable-toggle  Hardened or toggle-based version for Phase 5 re-test
+```
 
 ## Quick Start
+
+From this project folder:
 
 ```bash
 docker compose up --build
 ```
 
-Open these local services:
+If the image was recently changed, especially after Dockerfile updates:
 
-- Web portal: http://localhost:8080
-- Adminer database console: http://localhost:8081
-- REST API health: http://localhost:5001/health
-- SSH into web container: `ssh student@localhost -p 2222`
+```bash
+docker compose down
+docker compose build --no-cache web
+docker compose up
+```
 
-Demo accounts:
+Open these services:
 
-- Admin: `admin@myeduconnect.local` / `admin123`
-- Student: `aina@student.local` / `student123`
-- Teacher: `teacher@school.local` / `teacher123`
-- SSH: `student` / `student123`
-- MySQL root: `root` / `root`
-- MySQL app user: `myedu` / `myedu123`
+| Service | URL / Access | Purpose |
+|---|---|---|
+| Web portal | `http://localhost:8080` | Main MyEduConnect learning platform |
+| REST API | `http://localhost:5001/health` | Separate API component |
+| Adminer | `http://localhost:8081` | Database administration console |
+| SSH | `ssh student@localhost -p 2222` | Web container shell access |
+| MySQL | `localhost:3306` | Exposed database service |
 
-## Important Safety Note
+## Demo Credentials
 
-Do not deploy this to the public internet. The weak credentials, unsafe SQL, weak sessions, exposed services, and insecure upload handling are intentional so the group can demonstrate exploitation and remediation.
+| Component | Username | Password |
+|---|---|---|
+| Web admin | `admin@myeduconnect.local` | `admin123` |
+| Web student | `aina@student.local` | `student123` |
+| Web teacher | `teacher@school.local` | `teacher123` |
+| SSH | `student` | `student123` |
+| MySQL root | `root` | `root` |
+| MySQL app user | `myedu` | `myedu123` |
 
-## Suggested Evidence Folders
+## Docker Services
 
-Use the included folders to organize your assignment evidence:
+| Container | Exposed Port | Internal Port | Description |
+|---|---:|---:|---|
+| `myeduconnect-web` | `8080` | `8080` | Flask web portal |
+| `myeduconnect-web` | `2222` | `22` | SSH foothold service |
+| `myeduconnect-api` | `5001` | `5001` | Separate REST API |
+| `myeduconnect-db` | `3306` | `3306` | MySQL database |
+| `myeduconnect-adminer` | `8081` | `8080` | Adminer database console |
 
-- `evidence/scans`
-- `evidence/pcaps`
-- `evidence/screenshots`
-- `exploits`
+## Deliberate Vulnerability Coverage
 
-## Main Documentation
+The lab includes the required vulnerability categories:
 
-- [Setup Guide](docs/setup-guide.md)
-- [Architecture](docs/architecture.md)
-- [Vulnerability Matrix](docs/vulnerability-matrix.md)
-- [Phase Checklist](docs/phase-checklist.md)
-- [Hardening Plan](docs/hardening-plan.md)
+- OWASP Top 10 web vulnerabilities, including SQL injection, stored XSS, broken access control, and unsafe upload behavior.
+- Server/OS misconfigurations, including weak SSH credentials, exposed Adminer/MySQL, weak permissions, and a writable root-run backup script.
+- Cryptographic weaknesses, including unsalted MD5 password hashes and predictable session tokens.
+- Network-layer weakness through cleartext HTTP traffic and static internal API key usage.
+
+The full deliberate vulnerability list is documented in:
+
+```text
+docs/vulnerability-matrix.md
+```
+
+## Privilege Escalation Path
+
+The current vulnerable web container includes a controlled privilege-escalation path for Phase 4.
+
+After SSH access:
+
+```bash
+ssh student@localhost -p 2222
+```
+
+Check the vulnerable backup script:
+
+```bash
+ls -l /usr/local/bin/myedu-backup
+sudo -l
+```
+
+The intended finding is:
+
+```text
+Writable root-run backup script / sudo misconfiguration
+```
+
+Evidence and remediation should be documented in the final report. The hardening recommendation is documented in:
+
+```text
+docs/hardening-plan.md
+```
+
+## Evidence Structure
+
+| Folder | Purpose |
+|---|---|
+| `evidence/screenshots/` | Phase 1 platform screenshots |
+| `evidence/scans/` | Phase 2 OSINT, Nmap, HTTP, WhatWeb, theHarvester, DNS, and enumeration evidence |
+| `evidence/screenshots_phase3/` | Phase 3 vulnerability assessment screenshots |
+| `evidence/pcaps/` | Wireshark or traffic-capture evidence |
+| `exploits/` | Phase 4 payload notes, exploit scripts, or command transcripts |
+
+## Documentation
+
+| File | Description |
+|---|---|
+| `docs/setup-guide.md` | Redeployment and setup instructions |
+| `docs/architecture.md` | Architecture and network layout |
+| `docs/vulnerability-matrix.md` | Deliberate vulnerability matrix |
+| `docs/phase-checklist.md` | Assignment phase checklist |
+| `docs/phase2-checklist.md` | Phase 2 completion checklist |
+| `docs/phase2-findings.md` | Phase 2 findings and evidence references |
+| `docs/hardening-plan.md` | Phase 5 remediation and re-test guidance |
+
+## Phase Status Summary
+
+| Phase | Status | Notes |
+|---|---|---|
+| Phase 1 Build | Complete | Platform, Docker setup, architecture, and screenshots are included. |
+| Phase 2 Reconnaissance and Enumeration | Complete | OSINT, Nmap, service enumeration, banner grabbing, default-credential checks, and anonymous-access checks are included. |
+| Phase 3 Vulnerability Assessment and Sniffing | Evidence uploaded | Screenshots are present. Confirm raw scanner outputs, PCAP files, and consolidated inventory before submission. |
+| Phase 4 Exploitation | In progress / team-dependent | Vulnerabilities and privilege-escalation path are available for demonstration. |
+| Phase 5 Defense, Hardening, and Re-test | Team-dependent | Use secure branch or secure/vulnerable toggle work if available. |
+| Phase 6 Final Report | Team-dependent | Use the docs and evidence folders as source material. |
+
+## Resetting Lab Data
+
+Normal stop/start keeps database data:
+
+```bash
+docker compose down
+docker compose up
+```
+
+To fully reset seeded data:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+## Git Workflow Recommendation
+
+Keep `main` as the stable evidence baseline. Team members should use branches for major changes:
+
+```bash
+git checkout -b feature/secure-vulnerable-toggle
+git add .
+git commit -m "Add secure and vulnerable mode toggle"
+git push -u origin feature/secure-vulnerable-toggle
+```
+
+For the final report, clearly state which branch was used for vulnerable-mode exploitation and which branch/version was used for hardening and re-testing.
