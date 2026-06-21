@@ -154,10 +154,10 @@ docs/hardening-plan.md
 |---|---|---|
 | Phase 1 Build | Complete | Platform, Docker setup, architecture, and screenshots are included. |
 | Phase 2 Reconnaissance and Enumeration | Complete | OSINT, Nmap, service enumeration, banner grabbing, default-credential checks, and anonymous-access checks are included. |
-| Phase 3 Vulnerability Assessment and Sniffing | Evidence uploaded | Screenshots are present. Confirm raw scanner outputs, PCAP files, and consolidated inventory before submission. |
-| Phase 4 Exploitation | In progress / team-dependent | Vulnerabilities and privilege-escalation path are available for demonstration. |
-| Phase 5 Defense, Hardening, and Re-test | Team-dependent | Use secure branch or secure/vulnerable toggle work if available. |
-| Phase 6 Final Report | Team-dependent | Use the docs and evidence folders as source material. |
+| Phase 3 Vulnerability Assessment and Sniffing | Complete | Assessment evidence and screenshots are included. |
+| Phase 4 Exploitation | Complete | Vulnerabilities and privilege-escalation path are available for demonstration. |
+| Phase 5 Defense, Hardening, and Re-test | Complete on separate branch | The hardening mode/toggle implementation is located on branch `feature/secure-toggle`. |
+| Phase 6 Final Report | Complete / report-dependent | Use the docs and evidence folders as source material. |
 
 ## Resetting Lab Data
 
@@ -175,15 +175,14 @@ docker compose down -v
 docker compose up --build
 ```
 
-## Git Workflow Recommendation
+## Hardening Branch Notice
 
-Keep `main` as the stable evidence baseline. Team members should use branches for major changes:
+The `main` branch is kept as the vulnerable platform and evidence baseline for assessment, exploitation, and documentation.
 
-```bash
-git checkout -b feature/secure-vulnerable-toggle
-git add .
-git commit -m "Add secure and vulnerable mode toggle"
-git push -u origin feature/secure-vulnerable-toggle
+The Phase 5 hardening mode/toggle implementation is available on:
+
+```text
+feature/secure-toggle
 ```
 
-For the final report, clearly state which branch was used for vulnerable-mode exploitation and which branch/version was used for hardening and re-testing.
+Lecturers should review `main` for the vulnerable version and evidence baseline, then review `feature/secure-toggle` for the hardened version, secure mode/toggle functionality, remediation work, and re-test comparison.
