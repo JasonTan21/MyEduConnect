@@ -1,0 +1,34 @@
+# MyEduConnect — Phase 5.2 custom IDS rules (Suricata / Snort-compatible)
+# Raw-content signatures so they fire deterministically when you replay an attack
+# PCAP. Covers the Phase 4 attacks. Run offline (recommended, reproducible) with:
+#   docker run --rm -v "%cd%\defense\ids:/work" -v "%cd%\evidence\pcaps:/pcaps" ^
+#     jasonish/suricata:latest -r /pcaps/<your-attack>.pcap -S /work/myeduconnect.rules -l /work
+#   type defense\ids\fast.log
+
+# 1) SQL injection on /login (VULN-01)
+alert tcp any any -> any any (msg:"TEST any packet"; sid:9999000; rev:1;)
+alert tcp any any -> any any (msg:"MYEDU SQLi on /login"; flow:to_server,established; content:"/login"; nocase; pcre:"/(%27|')\s*(or|--|%2d%2d)/i"; sid:9100001; rev:1;)
+
+# 2) UNION SQL injection on /courses search (VULN-02)
+alert tcp any any -> any any (msg:"MYEDU SQLi UNION on /courses"; flow:to_server,established; content:"/courses"; nocase; pcre:"/union(\s|\+|%20)+select/i"; sid:9100002; rev:1;)
+
+# 3) SQL injection on REST API student endpoint (VULN-03)
+alert tcp any any -> any any (msg:"MYEDU SQLi on API student endpoint"; flow:to_server,established; content:"/internal/student/"; nocase; pcre:"/(union(\s|%20)+select|or(\s|%20)+1(\s|%20)*=(\s|%20)*1)/i"; sid:9100003; rev:1;)
+
+# 4) Stored XSS payload in a POST body (VULN-04)
+alert tcp any any -> any any (msg:"MYEDU Stored XSS script tag in request"; flow:to_server,established; pcre:"/(%3C|<)\s*script/i"; sid:9100004; rev:1;)
+
+# 5) IDOR invoice access (VULN-05)
+alert tcp any any -> any any (msg:"MYEDU IDOR invoice access"; flow:to_server,established; content:"GET"; content:"/invoice/"; nocase; sid:9100005; rev:1;)
+
+# 6) Dangerous file-upload extension on /support (VULN-06)
+alert tcp any any -> any any (msg:"MYEDU dangerous upload extension"; flow:to_server,established; content:"/support"; nocase; pcre:"/filename=\x22[^\x22]*\.(php[0-9]?|phtml|sh|exe|jsp|asp|svg|html?)/i"; sid:9100006; rev:1;)
+
+# 7) SSH connection to lab port 2222 (VULN-07)
+alert tcp any any -> any 2222 (msg:"MYEDU SSH connection to lab port 2222"; flow:to_server; content:"SSH-"; depth:4; sid:9100007; rev:1;)
+
+# 8) Cleartext static API key in traffic (VULN-12)
+alert tcp any any -> any any (msg:"MYEDU cleartext static API key"; content:"X-API-Key|3a 20|demo-api-key"; nocase; sid:9100008; rev:1;)
+
+# 9) Privilege-escalation backup script invoked over SSH (VULN-14)
+alert tcp any any -> any 2222 (msg:"MYEDU privesc myedu-backup over SSH"; flow:to_server,established; content:"myedu-backup"; sid:9100009; rev:1;)

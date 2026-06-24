@@ -19,6 +19,9 @@ services:
       context: ./web
       dockerfile: Dockerfile.secure
     container_name: myeduconnect-web-secure
+    networks:
+      - frontend
+      - backend
     ports:
       - "8080:8080"
     environment:
@@ -41,6 +44,8 @@ services:
   api:
     build: ./api
     container_name: myeduconnect-api-secure
+    networks:
+      - backend  
     # No published ports: the API is only reachable on the internal network (fixes E11/E8 exposure).
     environment:
       SECURE_MODE: "1"
@@ -56,6 +61,8 @@ services:
   db:
     image: mysql:8.0
     container_name: myeduconnect-db-secure
+    networks:
+      - backend
     # local-infile disabled; strong unique passwords below (fixes E8 weak creds).
     command: --default-authentication-plugin=mysql_native_password
     # No published ports: MySQL is not reachable from the host (fixes E8 exposure).
@@ -74,5 +81,9 @@ services:
 
 # No adminer service (fixes E8 exposed DB GUI).
 
+networks:
+  frontend:
+  backend:
+  
 volumes:
   db_data_secure:
